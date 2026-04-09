@@ -1,0 +1,74 @@
+import java.util.*;
+
+class Solution {
+    private static final int MOD = 1_000_000_007;
+
+    public int xorAfterQueries(int[] nums, int[][] queries) {
+        int n = nums.length;
+        int threshold = (int) Math.sqrt(n);
+        
+        // Group small-step queries by k
+        List<int[]>[] smallStepGroups = new ArrayList[threshold];
+        for (int i = 1; i < threshold; i++) {
+            smallStepGroups[i] = new ArrayList<>();
+        }
+
+        for (int[] q : queries) {
+            int l = q[0], r = q[1], k = q[2], v = q[3];
+            if (k >= threshold) {
+                // Process large steps directly
+                for (int i = l; i <= r; i += k) {
+                    nums[i] = (int) ((long) nums[i] * v % MOD);
+                }
+            } else {
+                smallStepGroups[k].add(q);
+            }
+        }
+
+        // Process small-step groups using prefix products
+        for (int k = 1; k < threshold; k++) {
+            if (smallStepGroups[k].isEmpty()) continue;
+
+            long[] diff = new long[n + k + 1];
+            Arrays.fill(diff, 1);
+
+            for (int[] q : smallStepGroups[k]) {
+                int l = q[0], r = q[1], v = q[3];
+                int lastIdx = l + ((r - l) / k) * k;
+                int nextIdx = lastIdx + k;
+
+                diff[l] = (diff[l] * v) % MOD;
+                diff[nextIdx] = (diff[nextIdx] * modInverse(v)) % MOD;
+            }
+
+            // Propagate the multipliers with stride k
+            for (int i = 0; i < n; i++) {
+                if (i >= k) {
+                    diff[i] = (diff[i] * diff[i - k]) % MOD;
+                }
+                nums[i] = (int) ((long) nums[i] * diff[i] % MOD);
+            }
+        }
+
+        int result = 0;
+        for (int num : nums) {
+            result ^= num;
+        }
+        return result;
+    }
+
+    private long modInverse(long n) {
+        return power(n, MOD - 2);
+    }
+
+    private long power(long x, long y) {
+        long res = 1;
+        x = x % MOD;
+        while (y > 0) {
+            if (y % 2 == 1) res = (res * x) % MOD;
+            y = y >> 1;
+            x = (x * x) % MOD;
+        }
+        return res;
+    }
+}
