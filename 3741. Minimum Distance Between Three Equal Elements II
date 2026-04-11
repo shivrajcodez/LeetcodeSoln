@@ -1,0 +1,32 @@
+import java.util.*;
+
+class Solution {
+    public int minimumDistance(int[] nums) {
+        int n = nums.length;
+        // Map value to a list of its indices in increasing order
+        Map<Integer, List<Integer>> indexMap = new HashMap<>();
+        
+        for (int i = 0; i < n; i++) {
+            indexMap.computeIfAbsent(nums[i], k -> new ArrayList<>()).add(i);
+        }
+        
+        int minDistance = Integer.MAX_VALUE;
+        boolean found = false;
+        
+        for (List<Integer> indices : indexMap.values()) {
+            // A good tuple requires at least 3 occurrences
+            if (indices.size() >= 3) {
+                found = true;
+                // Check consecutive triples to find the minimum span
+                for (int h = 0; h <= indices.size() - 3; h++) {
+                    int i = indices.get(h);
+                    int k = indices.get(h + 2);
+                    int currentDist = 2 * (k - i);
+                    minDistance = Math.min(minDistance, currentDist);
+                }
+            }
+        }
+        
+        return found ? minDistance : -1;
+    }
+}
