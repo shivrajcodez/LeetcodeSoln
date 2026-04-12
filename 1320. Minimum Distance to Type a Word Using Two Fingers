@@ -1,0 +1,32 @@
+class Solution {
+    public int minimumDistance(String word) {
+        int n = word.length();
+        // dp[otherFinger][i] represents the min distance to type 
+        // up to index i, with the other finger at 'otherFinger'
+        Integer[][] memo = new Integer[27][n];
+        return solve(word, 0, 26, memo); // 26 represents a "hovering" state (no cost)
+    }
+
+    private int solve(String word, int idx, int otherFinger, Integer[][] memo) {
+        if (idx == word.length()) return 0;
+        if (memo[otherFinger][idx] != null) return memo[otherFinger][idx];
+
+        int currChar = word.charAt(idx) - 'A';
+        int prevChar = idx == 0 ? 26 : word.charAt(idx - 1) - 'A';
+
+        // Option 1: Move the finger that typed the previous character
+        int dist1 = getDist(prevChar, currChar) + solve(word, idx + 1, otherFinger, memo);
+
+        // Option 2: Move the finger that was at 'otherFinger'
+        int dist2 = getDist(otherFinger, currChar) + solve(word, idx + 1, prevChar, memo);
+
+        return memo[otherFinger][idx] = Math.min(dist1, dist2);
+    }
+
+    private int getDist(int from, int to) {
+        if (from == 26) return 0; // Starting first move has no cost
+        int r1 = from / 6, c1 = from % 6;
+        int r2 = to / 6, c2 = to % 6;
+        return Math.abs(r1 - r2) + Math.abs(c1 - c2);
+    }
+}
