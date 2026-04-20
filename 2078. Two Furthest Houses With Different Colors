@@ -1,0 +1,20 @@
+class Solution {
+    public int maxDistance(int[] colors) {
+        int n = colors.length;
+        int i = 0;
+        int j = n - 1;
+
+        // Move from the left to find the first house different from the last house
+        while (colors[i] == colors[n - 1]) {
+            i++;
+        }
+
+        // Move from the right to find the first house different from the first house
+        while (colors[j] == colors[0]) {
+            j--;
+        }
+
+        // The answer is the maximum of the two distances
+        return Math.max(n - 1 - i, j);
+    }
+}
