@@ -1,0 +1,29 @@
+class Solution {
+    public int longestSubarray(int[] nums) {
+        int left = 0;
+        int zeroCount = 0;
+        int maxLen = 0;
+
+        for (int right = 0; right < nums.length; right++) {
+            // If we encounter a 0, increment our zero counter
+            if (nums[right] == 0) {
+                zeroCount++;
+            }
+
+            // If we have more than one zero, shrink the window from the left
+            while (zeroCount > 1) {
+                if (nums[left] == 0) {
+                    zeroCount--;
+                }
+                left++;
+            }
+
+            // Update max length. 
+            // The current window size is (right - left + 1).
+            // We subtract 1 because we MUST delete one element.
+            maxLen = Math.max(maxLen, right - left);
+        }
+
+        return maxLen;
+    }
+}
