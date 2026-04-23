@@ -1,0 +1,32 @@
+import java.util.TreeSet;
+
+class SmallestInfiniteSet {
+    // Tracks the smallest number in the infinite set that hasn't been modified
+    private int minAvailable;
+    // Tracks numbers smaller than minAvailable that were added back
+    private TreeSet<Integer> addedBack;
+
+    public SmallestInfiniteSet() {
+        this.minAvailable = 1;
+        this.addedBack = new TreeSet<>();
+    }
+    
+    public int popSmallest() {
+        // If there are numbers added back, the smallest among them is the absolute smallest
+        if (!addedBack.isEmpty()) {
+            return addedBack.pollFirst();
+        }
+        // Otherwise, return the current pointer and increment it
+        int res = minAvailable;
+        minAvailable++;
+        return res;
+    }
+    
+    public void addBack(int num) {
+        // Only add back if the number is smaller than our current infinite pointer
+        // and is not already in the addedBack set (TreeSet handles uniqueness)
+        if (num < minAvailable) {
+            addedBack.add(num);
+        }
+    }
+}
