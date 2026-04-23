@@ -1,0 +1,46 @@
+import java.util.PriorityQueue;
+
+class Solution {
+    public long totalCost(int[] costs, int k, int candidates) {
+        int n = costs.length;
+        // Min-heap for the first 'candidates' workers
+        PriorityQueue<Integer> headHeap = new PriorityQueue<>();
+        // Min-heap for the last 'candidates' workers
+        PriorityQueue<Integer> tailHeap = new PriorityQueue<>();
+        
+        int nextHead = 0;
+        int nextTail = n - 1;
+        
+        // Fill initial head candidates
+        while (nextHead < candidates) {
+            headHeap.offer(costs[nextHead++]);
+        }
+        
+        // Fill initial tail candidates, ensuring no overlap with head
+        while (nextTail >= Math.max(nextHead, n - candidates)) {
+            tailHeap.offer(costs[nextTail--]);
+        }
+        
+        long totalCost = 0;
+        
+        for (int i = 0; i < k; i++) {
+            // Compare the smallest from both heaps
+            // If head is smaller or equal (per problem tie-breaker rules), pick from head
+            if (tailHeap.isEmpty() || (!headHeap.isEmpty() && headHeap.peek() <= tailHeap.peek())) {
+                totalCost += headHeap.poll();
+                // If there are still workers in the middle, move the next available to headHeap
+                if (nextHead <= nextTail) {
+                    headHeap.offer(costs[nextHead++]);
+                }
+            } else {
+                totalCost += tailHeap.poll();
+                // If there are still workers in the middle, move the next available to tailHeap
+                if (nextHead <= nextTail) {
+                    tailHeap.offer(costs[nextTail--]);
+                }
+            }
+        }
+        
+        return totalCost;
+    }
+}
