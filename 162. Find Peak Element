@@ -1,0 +1,24 @@
+class Solution {
+    public int findPeakElement(int[] nums) {
+        int left = 0;
+        int right = nums.length - 1;
+
+        // Binary search to find a peak
+        while (left < right) {
+            int mid = left + (right - left) / 2;
+
+            // If the element to the right is greater, 
+            // then a peak must exist on the right side.
+            if (nums[mid] < nums[mid + 1]) {
+                left = mid + 1;
+            } 
+            // Otherwise, a peak exists at 'mid' or to the left.
+            else {
+                right = mid;
+            }
+        }
+
+        // When left == right, we have narrowed down to a peak element.
+        return left;
+    }
+}
