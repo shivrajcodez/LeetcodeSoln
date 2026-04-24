@@ -1,0 +1,39 @@
+class Solution {
+    public int minEatingSpeed(int[] piles, int h) {
+        int left = 1;
+        int right = 0;
+        
+        // The maximum possible speed Koko needs is the largest pile size
+        for (int pile : piles) {
+            right = Math.max(right, pile);
+        }
+        
+        int result = right;
+        
+        while (left <= right) {
+            int mid = left + (right - left) / 2;
+            
+            // Calculate total hours needed at speed 'mid'
+            if (canFinish(piles, h, mid)) {
+                result = mid;    // Record this speed as a potential answer
+                right = mid - 1; // Try to find a slower speed
+            } else {
+                left = mid + 1;  // Too slow, must increase speed
+            }
+        }
+        
+        return result;
+    }
+    
+    private boolean canFinish(int[] piles, int h, int speed) {
+        long totalHours = 0;
+        for (int pile : piles) {
+            // Ceiling division: (pile + speed - 1) / speed
+            totalHours += (pile + speed - 1) / speed;
+            
+            // Early exit if we already exceed h
+            if (totalHours > h) return false;
+        }
+        return totalHours <= h;
+    }
+}
