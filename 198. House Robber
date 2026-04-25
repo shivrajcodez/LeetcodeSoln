@@ -1,0 +1,22 @@
+class Solution {
+    public int rob(int[] nums) {
+        if (nums == null || nums.length == 0) return 0;
+        if (nums.length == 1) return nums[0];
+        
+        // Tracks max money robbed up to two houses ago
+        int prev2 = 0;
+        // Tracks max money robbed up to the previous house
+        int prev1 = 0;
+        
+        for (int num : nums) {
+            // Decision: Max of (robbing current + two houses ago) OR (skipping current)
+            int current = Math.max(prev2 + num, prev1);
+            
+            // Move the window forward
+            prev2 = prev1;
+            prev1 = current;
+        }
+        
+        return prev1;
+    }
+}
