@@ -1,0 +1,38 @@
+import java.util.TreeMap;
+
+class SummaryRanges {
+    // Key: start of interval, Value: the interval [start, end]
+    private TreeMap<Integer, int[]> treeMap;
+
+    public SummaryRanges() {
+        treeMap = new TreeMap<>();
+    }
+
+    public void addNum(int value) {
+        if (treeMap.containsKey(value)) return;
+
+        // Find the intervals closest to the new value
+        Integer low = treeMap.lowerKey(value);
+        Integer high = treeMap.higherKey(value);
+
+        if (low != null && high != null && treeMap.get(low)[1] + 1 == value && high == value + 1) {
+            // Case 1: The value bridges two intervals
+            treeMap.get(low)[1] = treeMap.get(high)[1];
+            treeMap.remove(high);
+        } else if (low != null && treeMap.get(low)[1] + 1 >= value) {
+            // Case 2: The value is already inside or extends the lower interval
+            treeMap.get(low)[1] = Math.max(treeMap.get(low)[1], value);
+        } else if (high != null && high == value + 1) {
+            // Case 3: The value extends the higher interval to the left
+            treeMap.put(value, new int[]{value, treeMap.get(high)[1]});
+            treeMap.remove(high);
+        } else {
+            // Case 4: The value forms a new isolated interval
+            treeMap.put(value, new int[]{value, value});
+        }
+    }
+
+    public int[][] getIntervals() {
+        return treeMap.values().toArray(new int[treeMap.size()][]);
+    }
+}
