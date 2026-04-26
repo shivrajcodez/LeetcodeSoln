@@ -1,0 +1,46 @@
+class StreamChecker {
+    class TrieNode {
+        TrieNode[] children = new TrieNode[26];
+        boolean isEndOfWord = false;
+    }
+
+    private TrieNode root;
+    private StringBuilder stream;
+
+    public StreamChecker(String[] words) {
+        root = new TrieNode();
+        stream = new StringBuilder();
+        
+        // Insert words in reverse order into the Trie
+        for (String word : words) {
+            TrieNode curr = root;
+            for (int i = word.length() - 1; i >= 0; i--) {
+                int index = word.charAt(i) - 'a';
+                if (curr.children[index] == null) {
+                    curr.children[index] = new TrieNode();
+                }
+                curr = curr.children[index];
+            }
+            curr.isEndOfWord = true;
+        }
+    }
+
+    public boolean query(char letter) {
+        stream.append(letter);
+        TrieNode curr = root;
+
+        // Traverse the stream backwards to find a matching word in the Trie
+        for (int i = stream.length() - 1; i >= 0; i--) {
+            int index = stream.charAt(i) - 'a';
+            curr = curr.children[index];
+            
+            if (curr == null) {
+                return false;
+            }
+            if (curr.isEndOfWord) {
+                return true;
+            }
+        }
+        return false;
+    }
+}
