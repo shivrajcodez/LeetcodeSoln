@@ -1,0 +1,36 @@
+import java.util.*;
+
+class Solution {
+    public List<List<String>> suggestedProducts(String[] products, String searchWord) {
+        List<List<String>> result = new ArrayList<>();
+        // Sort products lexicographically to ensure we pick the smallest ones
+        Arrays.sort(products);
+        
+        int left = 0;
+        int right = products.length - 1;
+        
+        for (int i = 0; i < searchWord.length(); i++) {
+            char c = searchWord.charAt(i);
+            
+            // Narrow the left pointer: must match character at index i
+            while (left <= right && (products[left].length() <= i || products[left].charAt(i) != c)) {
+                left++;
+            }
+            
+            // Narrow the right pointer: must match character at index i
+            while (left <= right && (products[right].length() <= i || products[right].charAt(i) != c)) {
+                right--;
+            }
+            
+            // Add up to 3 suggestions from the current valid range
+            List<String> suggestions = new ArrayList<>();
+            int remain = right - left + 1;
+            for (int j = 0; j < Math.min(3, remain); j++) {
+                suggestions.add(products[left + j]);
+            }
+            result.add(suggestions);
+        }
+        
+        return result;
+    }
+}
