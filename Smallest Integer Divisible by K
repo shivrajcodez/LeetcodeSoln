@@ -1,0 +1,21 @@
+class Solution {
+    public int smallestRepunitDivByK(int k) {
+        // Optimization: Numbers ending in 1 are never divisible by 2 or 5
+        if (k % 2 == 0 || k % 5 == 0) {
+            return -1;
+        }
+
+        int remainder = 0;
+        // The length of the smallest integer will be at most K
+        for (int length = 1; length <= k; length++) {
+            // Update remainder for the next repunit: (previous * 10 + 1) % k
+            remainder = (remainder * 10 + 1) % k;
+            
+            if (remainder == 0) {
+                return length;
+            }
+        }
+
+        return -1;
+    }
+}
