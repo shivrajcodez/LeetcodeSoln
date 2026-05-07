@@ -1,0 +1,42 @@
+import java.util.*;
+
+class Solution {
+    public long minCost(int[] nums, int[] costs) {
+        int n = nums.length;
+        long[] dp = new long[n];
+        Arrays.fill(dp, Long.MAX_VALUE);
+        dp[0] = 0;
+
+        // Lists to store valid jump targets for each index
+        List<Integer>[] targets = new ArrayList[n];
+        for (int i = 0; i < n; i++) targets[i] = new ArrayList<>();
+
+        // Monotonic stacks to find next greater/equal and next smaller elements
+        Deque<Integer> stackGE = new ArrayDeque<>();
+        Deque<Integer> stackS = new ArrayDeque<>();
+
+        for (int i = 0; i < n; i++) {
+            // Condition 1: Next Greater or Equal
+            while (!stackGE.isEmpty() && nums[i] >= nums[stackGE.peek()]) {
+                targets[stackGE.pop()].add(i);
+            }
+            stackGE.push(i);
+
+            // Condition 2: Next Smaller
+            while (!stackS.isEmpty() && nums[i] < nums[stackS.peek()]) {
+                targets[stackS.pop()].add(i);
+            }
+            stackS.push(i);
+        }
+
+        // DP transition
+        for (int i = 0; i < n; i++) {
+            if (dp[i] == Long.MAX_VALUE) continue;
+            for (int next : targets[i]) {
+                dp[next] = Math.min(dp[next], dp[i] + costs[next]);
+            }
+        }
+
+        return dp[n - 1];
+    }
+}
