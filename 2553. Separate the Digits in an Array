@@ -1,0 +1,24 @@
+import java.util.ArrayList;
+import java.util.List;
+
+class Solution {
+    public int[] separateDigits(int[] nums) {
+        List<Integer> digitList = new ArrayList<>();
+        
+        for (int num : nums) {
+            // Option 1: Using String conversion for simple left-to-right processing
+            String s = Integer.toString(num);
+            for (char c : s.toCharArray()) {
+                digitList.add(c - '0');
+            }
+        }
+        
+        // Convert the List back to the required int array
+        int[] result = new int[digitList.size()];
+        for (int i = 0; i < digitList.size(); i++) {
+            result[i] = digitList.get(i);
+        }
+        
+        return result;
+    }
+}
