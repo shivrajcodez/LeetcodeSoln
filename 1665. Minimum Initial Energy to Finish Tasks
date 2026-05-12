@@ -1,0 +1,29 @@
+import java.util.Arrays;
+
+class Solution {
+    public int minimumEffort(int[][] tasks) {
+        // Step 1: Sort by the required "buffer" (minimum - actual) in descending order
+        Arrays.sort(tasks, (a, b) -> (b[1] - b[0]) - (a[1] - a[0]));
+        
+        int initialEnergy = 0;
+        int currentEnergy = 0;
+        
+        // Step 2: Simulate taking the tasks
+        for (int[] task : tasks) {
+            int actual = task[0];
+            int minimum = task[1];
+            
+            // If we don't have enough energy to even start, we must increase our starting pool
+            if (currentEnergy < minimum) {
+                int deficit = minimum - currentEnergy;
+                initialEnergy += deficit;
+                currentEnergy += deficit; // currentEnergy effectively becomes 'minimum'
+            }
+            
+            // Spend the energy required for the task
+            currentEnergy -= actual;
+        }
+        
+        return initialEnergy;
+    }
+}
