@@ -1,0 +1,39 @@
+class Solution {
+    public int minMoves(int[] nums, int limit) {
+        int n = nums.length;
+        // The maximum possible sum is 2 * limit.
+        // We need an array up to 2 * limit + 2 to handle upper boundary updates.
+        int[] diff = new int[2 * limit + 2];
+
+        for (int i = 0; i < n / 2; i++) {
+            int a = Math.min(nums[i], nums[n - 1 - i]);
+            int b = Math.max(nums[i], nums[n - 1 - i]);
+
+            // Default: 2 moves for any valid sum starting at minimum sum 2
+            diff[2] += 2;
+            
+            // Interval [a + 1, a + b - 1] requires 1 move (change from 2 to 1)
+            diff[a + 1] -= 1;
+            
+            // Point (a + b) requires 0 moves (change from 1 to 0)
+            diff[a + b] -= 1;
+            
+            // Interval [a + b + 1, b + limit] requires 1 move (change from 0 to 1)
+            diff[a + b + 1] += 1;
+            
+            // Interval [b + limit + 1, 2 * limit] requires 2 moves (change from 1 to 2)
+            diff[b + limit + 1] += 1;
+        }
+
+        int minMoves = n;
+        int currentMoves = 0;
+
+        // Calculate prefix sum to find the minimum moves at any possible target sum
+        for (int i = 2; i <= 2 * limit; i++) {
+            currentMoves += diff[i];
+            minMoves = Math.min(minMoves, currentMoves);
+        }
+
+        return minMoves;
+    }
+}
